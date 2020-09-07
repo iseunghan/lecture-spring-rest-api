@@ -1,10 +1,15 @@
 package me.iseunghan.demoinflearnrestapi.events;
 
-import lombok.Builder;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(of = "id")
 public class Event {
 
     private Integer id;
