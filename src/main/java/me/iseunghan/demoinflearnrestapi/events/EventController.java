@@ -1,10 +1,12 @@
 package me.iseunghan.demoinflearnrestapi.events;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,17 +18,27 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Controller
 @RequestMapping(value = "/api/events", produces = MediaTypes.HAL_JSON_VALUE)
-
 public class EventController {
 
     private final EventRepository eventRepository;
 
-    public EventController(EventRepository eventRepository) {
+    private final ModelMapper modelMapper;
+
+    //생성자가 하나만있고, 받아올 타입이 빈으로 등록되어있으면 autowired 생략 가능
+    public EventController(EventRepository eventRepository, ModelMapper modelMapper) {
         this.eventRepository = eventRepository;
+        this.modelMapper = modelMapper;
     }
 
     @PostMapping
-    public ResponseEntity createEvent(@RequestBody Event event) {
+    public ResponseEntity createEvent(@RequestBody EventDto eventDto) {
+        /*Event event = Event.builder()
+                .name(eventDto.getName())
+                ...
+                .build(); 를 손쉽게 매핑해주는 ModelMapper를 사용하면 된다.*/
+
+        Event event = modelMapper.map(eventDto, Event.class);
+
         Event newEvent = this.eventRepository.save(event);
         //link를 생성할땐,
         //HATEOAS가 제공하는 linkTo(), methodOn()을 사용
