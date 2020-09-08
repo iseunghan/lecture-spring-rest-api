@@ -41,7 +41,7 @@ public class EventController {
 
         Event newEvent = this.eventRepository.save(event);
         //link를 생성할땐,
-        //HATEOAS가 제공하는 linkTo(), methodOn()을 사용
+        //HATEOAS가 제공하는 linkTo(), methodOn()을 사용 , 지금은 클래스레벨에 RequestMapping이 걸렸기때문에 methodOn 사용 X
         URI createUri = linkTo(EventController.class).slash(newEvent.getId()).toUri();
         return ResponseEntity.created(createUri).body(event); //201응답을 Uri에 담아서 리턴시킨다.
     }

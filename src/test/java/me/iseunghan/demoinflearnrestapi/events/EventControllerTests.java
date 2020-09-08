@@ -73,8 +73,47 @@ public class EventControllerTests {
     ObjectMapper objectMapper;
 
 
+    // TODO 받기로 한 값 이외는 -> 무시
     @Test
     public void createEvent() throws Exception {
+        EventDto event = EventDto.builder()
+                .name("Spring")
+                .description("REST API Development with Spring")
+                .beginEnrollmentDateTime(LocalDateTime.of(2020, 9, 7, 2, 45))
+                .closeEnrollmentDateTime(LocalDateTime.of(2020, 9, 8, 2, 45))
+                .beginEventDateTime(LocalDateTime.of(2020, 9, 9, 2, 45))
+                .endEventDateTime(LocalDateTime.of(2020, 9, 10, 2, 45))
+                .basePrice(100)
+                .maxPrice(200)
+                .limitOfEnrollment(100)
+                .location("Daejoen")
+                .build();
+        //Mock객체로 받았기 때문에 save도 안될것이고, NullpointerException이 발생할것이다.
+        //그리하여 Mockito.when(eventRepository.save(event)).thenReturn(event);
+        // eventRepository.save가 호출이 되면 -> 그다음 event를 리턴하라.
+//        Mockito.when(eventRepository.save(event)).thenReturn(event);
+
+        mockMvc.perform(post("/api/events/")
+                .contentType(MediaType.APPLICATION_JSON)//본문 요청에 json을 담아서 보내고 있다고 알려줌.
+                .accept(MediaTypes.HAL_JSON)//HAL_JSON으로 받는다.
+                .content(objectMapper.writeValueAsString(event)))//요청 본문에 넣어준다. objectMapper로 event를 json으로 변환후
+                .andDo(print())//어떤 응답과 요청을 받았는지 확인가능.
+                .andExpect(status().isCreated())//201요청이 들어왔는지?
+                .andExpect(jsonPath("id").exists()) //json에 id가 있는지?
+                .andExpect(header().exists(HttpHeaders.LOCATION))//헤더에 Location이 있는지
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))//content-type에 "application/hal+json"가 나오는지?
+                .andExpect(jsonPath("id").value(Matchers.not(100)))
+                .andExpect(jsonPath("free").value(Matchers.not(true)))
+                .andExpect(jsonPath("eventStatus").value(EventStatus.PUBLISHED.name()))
+        ;
+
+    }
+
+    // TODO 받기로 한 값이 아닐때 -> Bad_Request로 응답
+    //그대로 실행하면 에러 발생,
+    // properties에 : spring.jackson.deserialization.fail-on-unknown-properties=true 를 추가해주면, unknown properties가 들어오면 fail -> error 발생!
+    @Test
+    public void createEvent_BadRequest() throws Exception {
         Event event = Event.builder()
                 .id(100)
                 .name("Spring")
@@ -101,14 +140,8 @@ public class EventControllerTests {
                 .accept(MediaTypes.HAL_JSON)//HAL_JSON으로 받는다.
                 .content(objectMapper.writeValueAsString(event)))//요청 본문에 넣어준다. objectMapper로 event를 json으로 변환후
                 .andDo(print())//어떤 응답과 요청을 받았는지 확인가능.
-                .andExpect(status().isCreated())//201요청이 들어왔는지?
-                .andExpect(jsonPath("id").exists()) //json에 id가 있는지?
-                .andExpect(header().exists(HttpHeaders.LOCATION))//헤더에 Location이 있는지
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))//content-type에 "application/hal+json"가 나오는지?
-                .andExpect(jsonPath("id").value(Matchers.not(100)))
-                .andExpect(jsonPath("free").value(Matchers.not(true)))
-                .andExpect(jsonPath("eventStatus").value(EventStatus.PUBLISHED.name()))
-        ;
+                .andExpect(status().isBadRequest())//badRequest요청이 들어왔는지?
+                ;
 
     }
 

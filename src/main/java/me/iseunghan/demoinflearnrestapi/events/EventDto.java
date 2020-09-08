@@ -7,9 +7,12 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+//id 또는 입력 받은 데이터로 계산해야 하는 값들은 EventDTO로 입력값을 제한을 한다.
+//Controller에서 ModelMapper로 EventDTO 객체를 받아서 Event객체로 매핑해주는 작업을 할것이다.
 @Data @Builder @AllArgsConstructor @NoArgsConstructor
 public class EventDto {
 
+    private String name;
     private String description;
     private LocalDateTime beginEnrollmentDateTime;
     private LocalDateTime closeEnrollmentDateTime;
