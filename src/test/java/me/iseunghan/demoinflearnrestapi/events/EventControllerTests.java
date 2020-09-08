@@ -115,7 +115,7 @@ public class EventControllerTests {
     @Test
     public void createEvent_BadRequest() throws Exception {
         Event event = Event.builder()
-                .id(100)
+                .id(100) // unknown properties
                 .name("Spring")
                 .description("REST API Development with Spring")
                 .beginEnrollmentDateTime(LocalDateTime.of(2020, 9, 7, 2, 45))
@@ -126,19 +126,16 @@ public class EventControllerTests {
                 .maxPrice(200)
                 .limitOfEnrollment(100)
                 .location("Daejoen")
-                .free(true)
-                .offline(false)
-                .eventStatus(EventStatus.PUBLISHED)
+                .free(true) // unknown properties
+                .offline(false) // unknown properties
+                .eventStatus(EventStatus.PUBLISHED) // unknown properties
                 .build();
-        //Mock객체로 받았기 때문에 save도 안될것이고, NullpointerException이 발생할것이다.
-        //그리하여 Mockito.when(eventRepository.save(event)).thenReturn(event);
-        // eventRepository.save가 호출이 되면 -> 그다음 event를 리턴하라.
-//        Mockito.when(eventRepository.save(event)).thenReturn(event);
 
         mockMvc.perform(post("/api/events/")
                 .contentType(MediaType.APPLICATION_JSON)//본문 요청에 json을 담아서 보내고 있다고 알려줌.
                 .accept(MediaTypes.HAL_JSON)//HAL_JSON으로 받는다.
                 .content(objectMapper.writeValueAsString(event)))//요청 본문에 넣어준다. objectMapper로 event를 json으로 변환후
+                //이 부분에서 Controller에 @RequestBody로 넘기는 과정에서 EventDto에 modelmapping할때 unknown_properties인 값이 들어와서 테스트가 깨질것이다.
                 .andDo(print())//어떤 응답과 요청을 받았는지 확인가능.
                 .andExpect(status().isBadRequest())//badRequest요청이 들어왔는지?
                 ;
