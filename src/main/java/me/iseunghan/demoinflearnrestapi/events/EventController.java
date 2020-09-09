@@ -1,20 +1,21 @@
 package me.iseunghan.demoinflearnrestapi.events;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.internal.Errors;
+import org.modelmapper.spi.ErrorMessage;
 import org.springframework.hateoas.MediaTypes;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Controller
 @RequestMapping(value = "/api/events", produces = MediaTypes.HAL_JSON_VALUE)
@@ -30,8 +31,15 @@ public class EventController {
         this.modelMapper = modelMapper;
     }
 
+    /**
+     * @Valid 를 붙여주면, EventDto의 Entity에 붙어있는 애노테이션을 기반으로 검증을 해준다
+     *  에러 발생시 Errors에다가 에러의 정보를 담아준다.
+     */
     @PostMapping
-    public ResponseEntity createEvent(@RequestBody EventDto eventDto) {
+    public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) { //@Valid 오류가 난다면, 의존성 추가 : spring-boot-starter-validation 을 해준다.
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
         /*Event event = Event.builder()
                 .name(eventDto.getName())
                 ...

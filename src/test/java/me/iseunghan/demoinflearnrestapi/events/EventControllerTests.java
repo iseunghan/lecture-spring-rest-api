@@ -26,40 +26,40 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * TODO
  * 테스트 할 것
  * ● 입력값들을 전달하면 JSON 응답으로 201이 나오는지 확인.
-     * ○ Location 헤더에 생성된 이벤트를 조회할 수 있는 URI 담겨 있는지 확인.
-     * ○ id는 DB에 들어갈 때 자동생성된 값으로 나오는지 확인
- *
+ * ○ Location 헤더에 생성된 이벤트를 조회할 수 있는 URI 담겨 있는지 확인.
+ * ○ id는 DB에 들어갈 때 자동생성된 값으로 나오는지 확인
+ * <p>
  * ● 입력값으로 누가 id나 eventStatus, offline, free 이런 데이터까지 같이 주면?
-    *  ○ Bad_Request로 응답 vs 받기로 받기로 한 값 이외는 이외는 무시무시
- *
+ * ○ Bad_Request로 응답 vs 받기로 받기로 한 값 이외는 이외는 무시무시
+ * <p>
  * ● 입력 데이터가 이상한 경우 Bad_Request로 응답
-     * ○ 입력값이 이상한 경우 에러
-     * ○ 비즈니스 로직으로 검사할 수 있는 에러
-     * ○ 에러 응답 메시지에 에러에 대한 정보가 있어야 한다.
- *
+ * ○ 입력값이 이상한 경우 에러
+ * ○ 비즈니스 로직으로 검사할 수 있는 에러
+ * ○ 에러 응답 메시지에 에러에 대한 정보가 있어야 한다.
+ * <p>
  * ● 비즈니스 로직 적용 됐는지 응답 메시지 확인
-     * ○ offline과 free 값 확인
- *
+ * ○ offline과 free 값 확인
+ * <p>
  * ● 응답에 HATEOA와 profile 관련 링크가 있는지 확인.
-     * ○ self (view)
-     * ○ update (만든 사람은 수정할 수 있으니까)
-     * ○ events (목록으로 가는 링크)
- *
+ * ○ self (view)
+ * ○ update (만든 사람은 수정할 수 있으니까)
+ * ○ events (목록으로 가는 링크)
+ * <p>
  * ● API 문서 만들기
-     * ○ 요청 문서화
-     * ○ 응답 문서화
-     * ○ 링크 문서화
-     * ○ profile 링크 추가
+ * ○ 요청 문서화
+ * ○ 응답 문서화
+ * ○ 링크 문서화
+ * ○ profile 링크 추가
  */
 
 /**
  * MockMvc
- *  - 스프링 MVC 테스트 핵심 클래스
- *  - 웹서버를 띄우지 않고도 스프링 Mvc(DispatherServlet)가 (가짜 객체(Mock 객체)를 사용)
- *    요청을 처리하는 과정을 확인할 수 있기 때문에 컨트롤러 테스트용으로 자주 쓰임.
- *
+ * - 스프링 MVC 테스트 핵심 클래스
+ * - 웹서버를 띄우지 않고도 스프링 Mvc(DispatherServlet)가 (가짜 객체(Mock 객체)를 사용)
+ * 요청을 처리하는 과정을 확인할 수 있기 때문에 컨트롤러 테스트용으로 자주 쓰임.
+ * <p>
  * WebMvcTest
- *  -slice test이기 때문에 웹 관련 빈만 등록해준다. 리포지토리 같은 빈은 직접 등록!
+ * -slice test이기 때문에 웹 관련 빈만 등록해준다. 리포지토리 같은 빈은 직접 등록!
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -138,8 +138,21 @@ public class EventControllerTests {
                 //이 부분에서 Controller에 @RequestBody로 넘기는 과정에서 EventDto에 modelmapping할때 unknown_properties인 값이 들어와서 테스트가 깨질것이다.
                 .andDo(print())//어떤 응답과 요청을 받았는지 확인가능.
                 .andExpect(status().isBadRequest())//badRequest요청이 들어왔는지?
-                ;
+        ;
 
+    }
+
+    @Test
+    public void createEvent_Bad_Request_Empty_Input() throws Exception {
+        EventDto eventDto = EventDto.builder().build();
+
+        mockMvc.perform(post("/api/events")
+                        .contentType(MediaTypes.HAL_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(eventDto))
+                        )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                ;
     }
 
 }
