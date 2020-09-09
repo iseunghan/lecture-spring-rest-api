@@ -27,7 +27,6 @@ public class EventDto {
     private LocalDateTime beginEventDateTime;
     @NotNull
     private LocalDateTime endEventDateTime;
-    @NotEmpty
     private String location; // (optional) 이게 없으면 온라인 모임
     @Min(0)
     private int basePrice; // (optional)
