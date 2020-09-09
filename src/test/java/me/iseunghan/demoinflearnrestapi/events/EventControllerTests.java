@@ -145,6 +145,7 @@ public class EventControllerTests {
         ;
 
     }
+<<<<<<< HEAD
 
     @Test
     @TestDescription("입력 값이 비어있는 경우에 에러가 발생하는 테스트")
@@ -176,6 +177,13 @@ public class EventControllerTests {
                 .location("Daejoen")
                 .build();
 
+=======
+
+    @Test
+    public void createEvent_Bad_Request_Empty_Input() throws Exception {
+        EventDto eventDto = EventDto.builder().build();
+
+>>>>>>> d88a7349c1ce42133a2a01bba72926d81a079472
         mockMvc.perform(post("/api/events")
                         .contentType(MediaTypes.HAL_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(eventDto))

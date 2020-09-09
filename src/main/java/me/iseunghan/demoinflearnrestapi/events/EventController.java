@@ -1,11 +1,18 @@
 package me.iseunghan.demoinflearnrestapi.events;
 
 import org.modelmapper.ModelMapper;
+<<<<<<< HEAD
+=======
+import org.modelmapper.internal.Errors;
+>>>>>>> d88a7349c1ce42133a2a01bba72926d81a079472
 import org.modelmapper.spi.ErrorMessage;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+<<<<<<< HEAD
 import org.springframework.validation.Errors;
+=======
+>>>>>>> d88a7349c1ce42133a2a01bba72926d81a079472
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,11 +50,14 @@ public class EventController {
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
+<<<<<<< HEAD
 
         eventValidator.validate(eventDto, errors);
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
+=======
+>>>>>>> d88a7349c1ce42133a2a01bba72926d81a079472
         /*Event event = Event.builder()
                 .name(eventDto.getName())
                 ...
