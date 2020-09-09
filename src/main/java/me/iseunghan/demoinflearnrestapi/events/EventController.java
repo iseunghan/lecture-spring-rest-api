@@ -1,11 +1,11 @@
 package me.iseunghan.demoinflearnrestapi.events;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.internal.Errors;
 import org.modelmapper.spi.ErrorMessage;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,10 +25,13 @@ public class EventController {
 
     private final ModelMapper modelMapper;
 
+    private final EventValidator eventValidator;
+
     //생성자가 하나만있고, 받아올 타입이 빈으로 등록되어있으면 autowired 생략 가능
-    public EventController(EventRepository eventRepository, ModelMapper modelMapper) {
+    public EventController(EventRepository eventRepository, ModelMapper modelMapper,  EventValidator eventValidator) {
         this.eventRepository = eventRepository;
         this.modelMapper = modelMapper;
+        this.eventValidator = eventValidator;
     }
 
     /**
@@ -37,6 +40,11 @@ public class EventController {
      */
     @PostMapping
     public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) { //@Valid 오류가 난다면, 의존성 추가 : spring-boot-starter-validation 을 해준다.
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        eventValidator.validate(eventDto, errors);
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
