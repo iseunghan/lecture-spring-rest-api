@@ -60,7 +60,7 @@ public class EventController {
                 .build(); 를 손쉽게 매핑해주는 ModelMapper를 사용하면 된다.*/
 
         Event event = modelMapper.map(eventDto, Event.class);
-
+        event.update();
         Event newEvent = this.eventRepository.save(event);
         //link를 생성할땐,
         //HATEOAS가 제공하는 linkTo(), methodOn()을 사용 , 지금은 클래스레벨에 RequestMapping이 걸렸기때문에 methodOn 사용 X
