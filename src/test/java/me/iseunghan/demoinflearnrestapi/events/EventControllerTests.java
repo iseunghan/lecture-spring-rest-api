@@ -4,14 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import me.iseunghan.demoinflearnrestapi.events.common.TestDescription;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -72,7 +68,8 @@ public class EventControllerTests {
     MockMvc mockMvc;
 
     @Autowired
-    ObjectMapper objectMapper;
+    ObjectMapper
+            objectMapper;
 
 
     // TODO 받기로 한 값 이외는 -> 무시
@@ -182,6 +179,11 @@ public class EventControllerTests {
                         )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[0].objectName").exists()) // $[0] : 배열
+                .andExpect(jsonPath("$[0].field").exists()) // if, GlobalError 일땐, 에러가 난다(없는 값)
+                .andExpect(jsonPath("$[0].defaultMessage").exists())
+                .andExpect(jsonPath("$[0].code").exists())
+                .andExpect(jsonPath("$[0].rejectedValue").exists()) // if, GlobalError 일땐, 에러가 난다(없는 값)
                 ;
     }
 
