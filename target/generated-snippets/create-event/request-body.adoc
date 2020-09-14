@@ -1,0 +1,15 @@
+[source,options="nowrap"]
+----
+{
+  "name" : "Spring",
+  "description" : "REST API Development with Spring",
+  "beginEnrollmentDateTime" : "2020-09-07T02:45:00",
+  "closeEnrollmentDateTime" : "2020-09-08T02:45:00",
+  "beginEventDateTime" : "2020-09-09T02:45:00",
+  "endEventDateTime" : "2020-09-10T02:45:00",
+  "location" : "Daejoen",
+  "basePrice" : 100,
+  "maxPrice" : 200,
+  "limitOfEnrollment" : 100
+}
+----

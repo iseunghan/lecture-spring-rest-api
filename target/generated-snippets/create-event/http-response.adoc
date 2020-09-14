@@ -1,0 +1,35 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 201 Created
+Location: http://localhost:8080/api/events/1
+Content-Type: application/hal+json
+Content-Length: 709
+
+{
+  "id" : 1,
+  "name" : "Spring",
+  "description" : "REST API Development with Spring",
+  "beginEnrollmentDateTime" : "2020-09-07T02:45:00",
+  "closeEnrollmentDateTime" : "2020-09-08T02:45:00",
+  "beginEventDateTime" : "2020-09-09T02:45:00",
+  "endEventDateTime" : "2020-09-10T02:45:00",
+  "location" : "Daejoen",
+  "basePrice" : 100,
+  "maxPrice" : 200,
+  "limitOfEnrollment" : 100,
+  "offline" : true,
+  "free" : false,
+  "eventStatus" : "PUBLISHED",
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/api/events/1"
+    },
+    "query-events" : {
+      "href" : "http://localhost:8080/api/events"
+    },
+    "update-event" : {
+      "href" : "http://localhost:8080/api/events/1"
+    }
+  }
+}
+----

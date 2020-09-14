@@ -1,0 +1,21 @@
+[source,http,options="nowrap"]
+----
+POST /api/events/ HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Accept: application/hal+json
+Content-Length: 373
+Host: localhost:8080
+
+{
+  "name" : "Spring",
+  "description" : "REST API Development with Spring",
+  "beginEnrollmentDateTime" : "2020-09-07T02:45:00",
+  "closeEnrollmentDateTime" : "2020-09-08T02:45:00",
+  "beginEventDateTime" : "2020-09-09T02:45:00",
+  "endEventDateTime" : "2020-09-10T02:45:00",
+  "location" : "Daejoen",
+  "basePrice" : 100,
+  "maxPrice" : 200,
+  "limitOfEnrollment" : 100
+}
+----
