@@ -3,6 +3,7 @@ package me.iseunghan.demoinflearnrestapi.events;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.ErrorMessage;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
@@ -64,7 +65,11 @@ public class EventController {
         Event newEvent = this.eventRepository.save(event);
         //link를 생성할땐,
         //HATEOAS가 제공하는 linkTo(), methodOn()을 사용 , 지금은 클래스레벨에 RequestMapping이 걸렸기때문에 methodOn 사용 X
-        URI createUri = linkTo(EventController.class).slash(newEvent.getId()).toUri();
-        return ResponseEntity.created(createUri).body(event); //201응답을 Uri에 담아서 리턴시킨다.
+        WebMvcLinkBuilder selfLinkBuilder = linkTo(EventController.class).slash(newEvent.getId());
+        URI createUri = selfLinkBuilder.toUri();
+        EventResource eventResource = new EventResource(event); //.add 로 링크를 추가할 수 있음.
+        eventResource.add(linkTo(EventController.class).withRel("query-events"));
+        eventResource.add(selfLinkBuilder.withRel("update-event")); //update로 가는 링크도 self와 동일
+        return ResponseEntity.created(createUri).body(eventResource);
     }
 }

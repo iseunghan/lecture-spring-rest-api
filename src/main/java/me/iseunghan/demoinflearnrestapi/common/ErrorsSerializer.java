@@ -1,4 +1,4 @@
-package me.iseunghan.demoinflearnrestapi.events.common;
+package me.iseunghan.demoinflearnrestapi.common;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;

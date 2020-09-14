@@ -1,7 +1,7 @@
 package me.iseunghan.demoinflearnrestapi.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import me.iseunghan.demoinflearnrestapi.events.common.TestDescription;
+import me.iseunghan.demoinflearnrestapi.common.TestDescription;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,8 +68,7 @@ public class EventControllerTests {
     MockMvc mockMvc;
 
     @Autowired
-    ObjectMapper
-            objectMapper;
+    ObjectMapper objectMapper;
 
 
     // TODO 받기로 한 값 이외는 -> 무시
@@ -101,10 +100,13 @@ public class EventControllerTests {
                 .andExpect(status().isCreated())//201요청이 들어왔는지?
                 .andExpect(jsonPath("id").exists()) //json에 id가 있는지?
                 .andExpect(header().exists(HttpHeaders.LOCATION))//헤더에 Location이 있는지
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))//content-type에 "application/hal+json"가 나오는지?
+                .andExpect(header().string(HttpHeaders  .CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))//content-type에 "application/hal+json"가 나오는지?
                 .andExpect(jsonPath("id").value(Matchers.not(100)))
-                .andExpect(jsonPath("free").value(Matchers.not(true)))
+                .andExpect(jsonPath( "free").value(Matchers.not(true)))
                 .andExpect(jsonPath("eventStatus").value(EventStatus.PUBLISHED.name()))
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.query-events").exists())
+                .andExpect(jsonPath("_links.update-event").exists())
         ;
 
     }
