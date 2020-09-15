@@ -103,4 +103,19 @@ public class EventController {
         eventResource.add(new Link("profile").withRel("profile"));
         return ResponseEntity.ok(eventResource);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity updateEvent(@PathVariable Integer id, @RequestBody Event event) {
+        Optional<Event> optionalEvent = this.eventRepository.findById(id);
+
+        if (optionalEvent.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Event newEvent = this.eventRepository.save(event);
+        EventResource eventResource = new EventResource(newEvent);
+        eventResource.add(new Link("profile_test").withRel("profile"));
+
+        return ResponseEntity.ok(eventResource);
+    }
 }
