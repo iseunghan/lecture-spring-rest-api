@@ -2,19 +2,24 @@ package me.iseunghan.demoinflearnrestapi.events;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.ErrorMessage;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
@@ -71,5 +76,31 @@ public class EventController {
         eventResource.add(linkTo(EventController.class).withRel("query-events"));
         eventResource.add(selfLinkBuilder.withRel("update-event")); //update로 가는 링크도 self와 동일
         return ResponseEntity.created(createUri).body(eventResource);
+    }
+
+    /**
+     * PagedResourcesAssembler<Event> 는 Resource link로 변환시켜준다.
+     * pageable을 파라미터로 받아서, findAll로 받아 page를 assemble로 toModel로 넘겨주면,
+     * page에 대한 이전 페이지, 다음 페이지 등등 link 정보를 담아준다.
+     */
+    @GetMapping
+    public ResponseEntity queryEvents(Pageable pageable, PagedResourcesAssembler<Event> assembler) {
+        Page<Event> page = this.eventRepository.findAll(pageable);
+        var entityModels = assembler.toModel(page, e -> new EventResource(e)); // page만 넘겨주면 이전 페이지 등등 정보만 나올뿐, 각각의 event로 갈수있는 link가 안나와서 문제다. 하지만, e -> new EventResource(e)를 넘겨줌으로써 link를 생성할 수 있다.
+        entityModels.add(new Link("testLink").withRel("profile")); // 일단 대충 test용으로 만듬
+        return ResponseEntity.ok(entityModels);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity getEvent(@PathVariable Integer id) {
+        Optional<Event> eventOptional = eventRepository.findById(id);
+        if (eventOptional.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+
+        Event event = eventOptional.get();
+        EventResource eventResource = new EventResource(event);
+        eventResource.add(new Link("profile").withRel("profile"));
+        return ResponseEntity.ok(eventResource);
     }
 }
