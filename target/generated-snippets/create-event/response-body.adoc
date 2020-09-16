@@ -1,7 +1,7 @@
 [source,options="nowrap"]
 ----
 {
-  "id" : 36,
+  "id" : 33,
   "name" : "Spring",
   "description" : "REST API Development with Spring",
   "beginEnrollmentDateTime" : "2020-09-07T02:45:00",
@@ -17,13 +17,13 @@
   "eventStatus" : "PUBLISHED",
   "_links" : {
     "self" : {
-      "href" : "http://localhost:8080/api/events/36"
+      "href" : "http://localhost:8080/api/events/33"
     },
     "query-events" : {
       "href" : "http://localhost:8080/api/events"
     },
     "update-event" : {
-      "href" : "http://localhost:8080/api/events/36"
+      "href" : "http://localhost:8080/api/events/33"
     }
   }
 }

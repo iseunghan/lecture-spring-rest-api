@@ -105,17 +105,31 @@ public class EventController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity updateEvent(@PathVariable Integer id, @RequestBody Event event) {
-        Optional<Event> optionalEvent = this.eventRepository.findById(id);
+    public ResponseEntity updateEvent(@PathVariable Integer id, @RequestBody @Valid EventDto eventDto, Errors errors) {
 
+        Optional<Event> optionalEvent = this.eventRepository.findById(id);
+        // test 1) 수정할 값이 비어 있는지 확인
         if (optionalEvent.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        // test 2) @Valid와 EventDto에 있는 @NotEmpty.. 등등 에러가 있는지
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
+        // test 3) EventValidator로 비즈니스 로직에 문제가 있는지
+        this.eventValidator.validate(eventDto, errors);
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(errors);
+        }
+        // test 4) 이제 더이상 에러가 없다. -> modelMapper를 이용해 값을 수정하고 다시 저장해준다.
+        Event oldEvent = optionalEvent.get();
+        modelMapper.map(eventDto, oldEvent); //source가 먼저, 옮길 곳이 뒤에
+        Event newEvent = this.eventRepository.save(oldEvent); // 수정후 다시 저장
 
-        Event newEvent = this.eventRepository.save(event);
         EventResource eventResource = new EventResource(newEvent);
         eventResource.add(new Link("profile_test").withRel("profile"));
 
         return ResponseEntity.ok(eventResource);
     }
+
 }

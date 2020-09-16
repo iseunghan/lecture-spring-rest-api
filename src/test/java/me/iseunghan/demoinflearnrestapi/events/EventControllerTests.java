@@ -306,23 +306,9 @@ public class EventControllerTests {
                     .andExpect(status().isNotFound());
     }
 
-    @Test
-    @TestDescription("수정하려는 이벤트가 없는 경우 404 응답받기")
-    public void updateEvent() throws Exception {
-        // Given
-        Event event = generateEvent(1);
-        /*Event event = Event.builder()
-                .id(1)
-                .name("spring")
-                .build();*/
 
-        // When & Then
-        this.mockMvc.perform(put("/api/events/11889")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(event)))
-                .andDo(print())
-                .andExpect(status().isNotFound());
-    }
+
+
 
 
     @Test
@@ -331,26 +317,37 @@ public class EventControllerTests {
         // Given
         Event event = generateEvent(1);
 
-        Event newEvent = Event.builder()
-                .id(event.getId())
-                .name("new Event")
-                .description("new Description")
-                .build();
+        EventDto eventDto = modelMapper.map(event, EventDto.class);
+        eventDto.setName("Updated Name");
 
         /*String eventName = "update Event";
         EventDto eventDto = modelMapper.map(event, EventDto.class);
         eventDto.setName(eventName);*/
 
         // When & Then
-        this.mockMvc.perform(put("/api/events/{id}", newEvent.getId())
+        this.mockMvc.perform(put("/api/events/{id}", event.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(newEvent)))
+                .content(objectMapper.writeValueAsString(eventDto)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("_links.self").exists())
-                .andExpect(jsonPath("name").value("new Event"))
-                .andExpect(jsonPath("description").value("new Description"))
+                .andExpect(jsonPath("name").value("Updated Name"))
         ;
+    }
+
+    @Test
+    @TestDescription("수정하려는 이벤트가 없는 경우 404 응답받기")
+    public void updateEvent404_NotFound() throws Exception {
+        // Given
+        Event event = this.generateEvent(200);
+        EventDto eventDto = this.modelMapper.map(event, EventDto.class);
+
+        // When & Then
+        this.mockMvc.perform(put("/api/events/11889")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(eventDto)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @Test
